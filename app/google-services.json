@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "994973454172",
+    "firebase_url": "https://agilequiz-ce9f9.firebaseio.com",
+    "project_id": "agilequiz-ce9f9",
+    "storage_bucket": "agilequiz-ce9f9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:994973454172:android:7d00370685f46b5bc7fb99",
+        "android_client_info": {
+          "package_name": "com.psb.quizapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "994973454172-r817rkq2c571bea48b0tne3tda2smoaa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.psb.quizapp",
+            "certificate_hash": "1e0a90ee7b5a46ae06d3fa3cb8b7056ca9e0fa14"
+          }
+        },
+        {
+          "client_id": "994973454172-jq8glqk6dj6rns8642g54a9mn4lg50gk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcfGaifC3dC-1K0QeIr3wxk7GoRSjogMA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "994973454172-jq8glqk6dj6rns8642g54a9mn4lg50gk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
