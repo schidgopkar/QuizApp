@@ -1,0 +1,140 @@
+package com.psb.quizapp
+
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.RadioButton
+import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.fragment_result_list.*
+
+private const val TAG = "ResultListFragment"
+
+class ResultListFragment : Fragment() {
+
+    private var userAnswers = hashMapOf<Int, String>()
+
+    var correctAnswerCount = 0
+
+    private lateinit var gradeTextView:TextView
+
+
+    private lateinit var resultRecyclerView: RecyclerView
+    private var adapter: ResultAdapter? = null
+
+    private val questionListViewModel: QuestionListViewModel by lazy {
+        ViewModelProviders.of(this).get(QuestionListViewModel::class.java)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+
+        userAnswers = arguments?.getSerializable("userAnswers") as HashMap<Int, String>
+
+        val view = inflater.inflate(R.layout.fragment_result_list, container, false)
+
+        resultRecyclerView =
+            view.findViewById(R.id.result_recycler_view) as RecyclerView
+        resultRecyclerView.layoutManager = LinearLayoutManager(context)
+
+        updateUI()
+
+        gradeTextView= view.findViewById(R.id.grade_text_view)
+
+
+        return view
+    }
+
+    private fun updateUI() {
+        questionListViewModel.getQuestionsData { data ->
+            adapter = ResultAdapter(data)
+            resultRecyclerView.adapter = adapter
+            data.forEachIndexed { index, question ->
+                if(userAnswers[index] == question.answer){
+                    correctAnswerCount ++
+
+            }
+                gradeTextView.text = "Grade $correctAnswerCount out of ${data.size}"
+            }
+        }
+
+    }
+
+    private inner class ResultHolder(view: View) : RecyclerView.ViewHolder(view),
+        View.OnClickListener {
+
+        private lateinit var question: Question
+
+        private val questionTextView: TextView = itemView.findViewById(R.id.question_text)
+        private val radioButton1: RadioButton = itemView.findViewById(R.id.result_list_radio_1)
+        private val radioButton2: RadioButton = itemView.findViewById(R.id.result_list_radio_2)
+        private val radioButton3: RadioButton = itemView.findViewById(R.id.result_list_radio_3)
+        private val radioButton4: RadioButton = itemView.findViewById(R.id.result_list_radio_4)
+        private val answerTextView: TextView = itemView.findViewById(R.id.answer_text)
+
+
+        init {
+            itemView.setOnClickListener(this)
+        }
+
+        fun bind(question: Question) {
+
+
+            this.question = question
+            questionTextView.text = this.question.text
+            radioButton1.text = question.optionA
+            radioButton2.text = question.optionB
+            radioButton3.text = question.optionC
+            radioButton4.text = question.optionD
+            answerTextView.text = "The correct answer is: ${question.answer}"
+        }
+
+        override fun onClick(v: View) {
+            Toast.makeText(context, "${question.id} clicked!", Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+
+    private inner class ResultAdapter(var questions: List<Question>) :
+        RecyclerView.Adapter<ResultHolder>() {
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
+                : ResultHolder {
+            val view = layoutInflater.inflate(R.layout.list_item_result, parent, false)
+            return ResultHolder(view)
+        }
+
+        override fun onBindViewHolder(holder: ResultHolder, position: Int) {
+            val question = questions[position]
+            holder.bind(question)
+        }
+
+        override fun getItemCount() = questions.size
+    }
+
+    companion object {
+        fun newInstance(userAnswers:HashMap<Int, String>): ResultListFragment {
+            val resultFragment = ResultListFragment()
+            val bundle = Bundle().apply {
+                putSerializable("userAnswers", userAnswers)
+            }
+            resultFragment.arguments = bundle
+            return resultFragment
+        }
+    }
+
+}

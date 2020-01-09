@@ -1,16 +1,6 @@
-<LinearLayout
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center|top"
-    android:orientation="vertical">
-
-    <ProgressBar
-        android:id="@+id/result_progress_bar"
-        style="?android:progressBarStyleHorizontal"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:progressDrawable="@drawable/circle" />
-
-</LinearLayout>
+    android:layout_height="match_parent"/>

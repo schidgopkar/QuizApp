@@ -6,19 +6,15 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.lifecycle.ViewModelProviders
 
 class MainActivity : AppCompatActivity() {
 
-    var question = Question()
-
     private var currentQuestionNumber = 0
 
-    var questions = mutableListOf(mapOf<String, Any>())
-
-    private var questionData = mapOf<String, Any>()
+    private var questions = mutableListOf<Question>()
 
     private var userAnswers = hashMapOf<Int, String>()
-    private var answers = hashMapOf<Int, String>()
 
     private lateinit var questionNumber:TextView
     private lateinit var questionTextView: TextView
@@ -33,19 +29,12 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var submitButton:Button
 
+    private var questionListViewModel: QuestionListViewModel = QuestionListViewModel()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        question.getAllQuestionsData { data, answers ->
-            if (data != null) {
-                questions = data
-                Log.d(ContentValues.TAG, "question data: $data")
-                updateQuestion()
-                this.answers = answers
-            }
-        }
 
         prevButton = findViewById(R.id.prev_button)
         nextButton = findViewById(R.id.next_button)
@@ -69,69 +58,44 @@ class MainActivity : AppCompatActivity() {
         }
 
         nextButton.setOnClickListener {
-                currentQuestionNumber = (currentQuestionNumber + 1) % questions.size
+                currentQuestionNumber = (currentQuestionNumber + 1) % questionListViewModel.questions.size
                 updateQuestion()
-            Log.d(ContentValues.TAG, "Choices data: ${questionData.size}")
         }
 
         submitButton.setOnClickListener {
-            val intent = ResultsActivity.newIntent(this@MainActivity, userAnswers, answers)
+            val intent = ResultsActivity.newIntent(this@MainActivity, userAnswers)
             startActivity(intent)
         }
+
+
+        questionListViewModel.getQuestionsData {data ->
+            questions = data
+            updateQuestion()
+        }
+
 
     }
 
 
     private fun updateQuestion(){
 
-            questionData = questions[currentQuestionNumber]
+            var question = questions[currentQuestionNumber]
 
-            val questionText = questionData["questionText"] as String?
+            questionNumber.text = "Question: ${(currentQuestionNumber + 1)}"
 
-            val choices = questionData?.get("options") as Map<String, Map<String,String>>?
+            questionTextView.text = question.text
 
-            val choiceA = choices?.get("a") as Map<String, Any>?
-            val choiceAText = choiceA?.get("optionText") as String
-            val choiceAValue =  choiceA?.get("optionValue") as Boolean
-
-            val choiceB = choices?.get("b") as Map<String, Any>?
-            val choiceBText = choiceB?.get("optionText") as String
-            val choiceBValue =  choiceB?.get("optionValue") as Boolean
-
-            val choiceC = choices?.get("c") as Map<String, Any>?
-            val choiceCText = choiceC?.get("optionText") as String
-            val choiceCValue =  choiceC?.get("optionValue") as Boolean
-
-            val choiceD = choices?.get("d") as Map<String, Any>?
-            val choiceDText = choiceD?.get("optionText") as String
-            val choiceDValue =  choiceD?.get("optionValue") as Boolean
-
-
-            questionNumber.text = "Question: ${currentQuestionNumber + 1}"
-
-            questionTextView.text = questionText
-
-            radioButton1.text = choiceAText
-            radioButton2.text = choiceBText
-            radioButton3.text = choiceCText
-            radioButton4.text = choiceDText
-
-            Log.d(ContentValues.TAG, "Choices data: $choiceAValue")
+            radioButton1.text = question.optionA
+            radioButton2.text = question.optionB
+            radioButton3.text = question.optionC
+            radioButton4.text = question.optionD
 
             when {
                 userAnswers[currentQuestionNumber] == "a" -> radioButton1.isChecked = true
                 userAnswers[currentQuestionNumber] == "b" -> radioButton2.isChecked = true
                 userAnswers[currentQuestionNumber] == "c" -> radioButton3.isChecked = true
                 userAnswers[currentQuestionNumber] == "d" -> radioButton4.isChecked = true
-                else -> {
-                    radioButton1.isChecked = false
-                    radioButton2.isChecked = false
-                    radioButton3.isChecked = false
-                    radioButton4.isChecked = false
-                }
             }
-
-
 
 
     }

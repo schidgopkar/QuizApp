@@ -10,11 +10,10 @@ import android.widget.ProgressBar
 import java.io.Serializable
 
 private const val EXTRA_USER_ANSWERS_MAP = "com.psb.quizapp.user_answers_map"
-private const val EXTRA_ANSWERS_MAP = "com.psb.quizapp.answers_map"
 
 class ResultsActivity : AppCompatActivity() {
 
-    private lateinit var resultProgressBar: ProgressBar
+//    private lateinit var resultProgressBar: ProgressBar
 
     private var userAnswers = hashMapOf<Int, String>()
     private var answers = hashMapOf<Int, String>()
@@ -23,15 +22,28 @@ class ResultsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_results)
 
-        resultProgressBar = findViewById(R.id.result_progress_bar)
+        val actionBar = supportActionBar
+        actionBar!!.title = "Results"
+
+//        resultProgressBar = findViewById(R.id.result_progress_bar)
 
         userAnswers = intent.getSerializableExtra(EXTRA_USER_ANSWERS_MAP) as HashMap<Int, String>
-        answers = intent.getSerializableExtra(EXTRA_ANSWERS_MAP) as HashMap<Int, String>
 
         Log.d(ContentValues.TAG, "Results Activity user answer data: $userAnswers")
-        Log.d(ContentValues.TAG, "Results Activity answers data: $answers")
 
         checkAnswers()
+
+        val currentFragment =
+            supportFragmentManager.findFragmentById(R.id.fragment_container)
+
+        if (currentFragment == null) {
+            val fragment = ResultListFragment.newInstance(userAnswers)
+
+            supportFragmentManager
+                .beginTransaction()
+                .add(R.id.fragment_container, fragment)
+                .commit()
+        }
 
     }
 
@@ -39,12 +51,10 @@ class ResultsActivity : AppCompatActivity() {
     companion object {
         fun newIntent(
             packagedContext: Context,
-            userAnswers: HashMap<Int, String>,
-            answers: HashMap<Int, String>
+            userAnswers: HashMap<Int, String>
         ): Intent {
             return Intent(packagedContext, ResultsActivity::class.java).apply {
                 putExtra(EXTRA_USER_ANSWERS_MAP, userAnswers)
-                putExtra(EXTRA_ANSWERS_MAP, answers)
             }
         }
     }
@@ -54,18 +64,18 @@ class ResultsActivity : AppCompatActivity() {
 
         var correctAnswersCount = 0
 
-        for((questionNumber, answer) in answers){
-            if(userAnswers[questionNumber] == answer){
-                correctAnswersCount ++
-            }
-        }
+//        for((questionNumber, answer) in answers){
+//            if(userAnswers[questionNumber] == answer){
+//                correctAnswersCount ++
+//            }
+//        }
 
         val percentageCorrect = (correctAnswersCount.toDouble()/(answers.size)) * 100
 
 
         Log.d(ContentValues.TAG, "Correct answers count: $percentageCorrect")
 
-        resultProgressBar.progress = percentageCorrect.toInt()
+//        resultProgressBar.progress = percentageCorrect.toInt()
 
 
     }
