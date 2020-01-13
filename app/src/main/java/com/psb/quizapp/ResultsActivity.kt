@@ -6,6 +6,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ProgressBar
 import java.io.Serializable
 
@@ -15,7 +17,7 @@ class ResultsActivity : AppCompatActivity() {
 
 //    private lateinit var resultProgressBar: ProgressBar
 
-    private var userAnswers = hashMapOf<Int, String>()
+    private var userAnswers = hashMapOf<String, String>()
     private var answers = hashMapOf<Int, String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,7 +29,7 @@ class ResultsActivity : AppCompatActivity() {
 
 //        resultProgressBar = findViewById(R.id.result_progress_bar)
 
-        userAnswers = intent.getSerializableExtra(EXTRA_USER_ANSWERS_MAP) as HashMap<Int, String>
+        userAnswers = intent.getSerializableExtra(EXTRA_USER_ANSWERS_MAP) as HashMap<String, String>
 
         Log.d(ContentValues.TAG, "Results Activity user answer data: $userAnswers")
 
@@ -48,10 +50,25 @@ class ResultsActivity : AppCompatActivity() {
     }
 
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        R.id.action_retake_quiz -> {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
+    }
+
+
     companion object {
         fun newIntent(
             packagedContext: Context,
-            userAnswers: HashMap<Int, String>
+            userAnswers: HashMap<String, String>
         ): Intent {
             return Intent(packagedContext, ResultsActivity::class.java).apply {
                 putExtra(EXTRA_USER_ANSWERS_MAP, userAnswers)

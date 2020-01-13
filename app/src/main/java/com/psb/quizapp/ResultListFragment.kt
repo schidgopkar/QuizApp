@@ -13,17 +13,21 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_result_list.*
+import android.content.Intent
+
+
+
+
 
 private const val TAG = "ResultListFragment"
 
 class ResultListFragment : Fragment() {
 
-    private var userAnswers = hashMapOf<Int, String>()
+    private var userAnswers = hashMapOf<String, String>()
 
     var correctAnswerCount = 0
 
     private lateinit var gradeTextView:TextView
-
 
     private lateinit var resultRecyclerView: RecyclerView
     private var adapter: ResultAdapter? = null
@@ -35,6 +39,8 @@ class ResultListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
+
     }
 
     override fun onCreateView(
@@ -43,7 +49,7 @@ class ResultListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        userAnswers = arguments?.getSerializable("userAnswers") as HashMap<Int, String>
+        userAnswers = arguments?.getSerializable("userAnswers") as HashMap<String, String>
 
         val view = inflater.inflate(R.layout.fragment_result_list, container, false)
 
@@ -63,14 +69,15 @@ class ResultListFragment : Fragment() {
         questionListViewModel.getQuestionsData { data ->
             adapter = ResultAdapter(data)
             resultRecyclerView.adapter = adapter
-            data.forEachIndexed { index, question ->
-                if(userAnswers[index] == question.answer){
+            data.forEach { question ->
+                if(userAnswers[question.id] == question.answer){
                     correctAnswerCount ++
 
             }
                 gradeTextView.text = "Grade $correctAnswerCount out of ${data.size}"
             }
         }
+
 
     }
 
@@ -101,6 +108,20 @@ class ResultListFragment : Fragment() {
             radioButton3.text = question.optionC
             radioButton4.text = question.optionD
             answerTextView.text = "The correct answer is: ${question.answer}"
+
+
+            when {
+                userAnswers[question.id] == "a" -> radioButton1.isChecked = true
+                userAnswers[question.id] == "b" -> radioButton2.isChecked = true
+                userAnswers[question.id] == "c" -> radioButton3.isChecked = true
+                userAnswers[question.id] == "d" -> radioButton4.isChecked = true
+            }
+
+            radioButton1.isEnabled = false
+            radioButton2.isEnabled = false
+            radioButton3.isEnabled = false
+            radioButton4.isEnabled = false
+
         }
 
         override fun onClick(v: View) {
@@ -127,7 +148,7 @@ class ResultListFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(userAnswers:HashMap<Int, String>): ResultListFragment {
+        fun newInstance(userAnswers:HashMap<String, String>): ResultListFragment {
             val resultFragment = ResultListFragment()
             val bundle = Bundle().apply {
                 putSerializable("userAnswers", userAnswers)
@@ -136,5 +157,7 @@ class ResultListFragment : Fragment() {
             return resultFragment
         }
     }
+
+
 
 }

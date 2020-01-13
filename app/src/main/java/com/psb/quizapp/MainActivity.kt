@@ -4,6 +4,8 @@ import android.content.ContentValues
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.lifecycle.ViewModelProviders
@@ -14,11 +16,12 @@ class MainActivity : AppCompatActivity() {
 
     private var questions = mutableListOf<Question>()
 
-    private var userAnswers = hashMapOf<Int, String>()
+    private var userAnswers = hashMapOf<String, String>()
 
     private lateinit var questionNumber:TextView
     private lateinit var questionTextView: TextView
 
+    private lateinit var radioGroup: RadioGroup
     private lateinit var radioButton1: RadioButton
     private lateinit var radioButton2: RadioButton
     private lateinit var radioButton3: RadioButton
@@ -45,6 +48,9 @@ class MainActivity : AppCompatActivity() {
 
         questionTextView = findViewById(R.id.question_text_view)
 
+
+        radioGroup = findViewById(R.id.radio_group)
+
         radioButton1 = findViewById(R.id.radio_1)
         radioButton2 = findViewById(R.id.radio_2)
         radioButton3 = findViewById(R.id.radio_3)
@@ -70,10 +76,26 @@ class MainActivity : AppCompatActivity() {
 
         questionListViewModel.getQuestionsData {data ->
             questions = data
+            questions.forEach{ question ->
+                userAnswers[question.id] = ""
+            }
             updateQuestion()
         }
 
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        R.id.action_retake_quiz -> {
+            recreate()
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
 
 
@@ -91,11 +113,19 @@ class MainActivity : AppCompatActivity() {
             radioButton4.text = question.optionD
 
             when {
-                userAnswers[currentQuestionNumber] == "a" -> radioButton1.isChecked = true
-                userAnswers[currentQuestionNumber] == "b" -> radioButton2.isChecked = true
-                userAnswers[currentQuestionNumber] == "c" -> radioButton3.isChecked = true
-                userAnswers[currentQuestionNumber] == "d" -> radioButton4.isChecked = true
+                userAnswers[questions[currentQuestionNumber].id] == "a" -> radioButton1.isChecked = true
+                userAnswers[questions[currentQuestionNumber].id] == "b" -> radioButton2.isChecked = true
+                userAnswers[questions[currentQuestionNumber].id] == "c" -> radioButton3.isChecked = true
+                userAnswers[questions[currentQuestionNumber].id] == "d" -> radioButton4.isChecked = true
+
+                else -> {
+                    radioGroup.clearCheck()
+                }
             }
+
+
+
+
 
 
     }
@@ -111,22 +141,22 @@ class MainActivity : AppCompatActivity() {
                 R.id.radio_1 ->
                     if (checked) {
                         Toast.makeText(this, view.text, Toast.LENGTH_SHORT).show()
-                        userAnswers[currentQuestionNumber] = "a"
+                        userAnswers[questions[currentQuestionNumber].id] = "a"
                     }
                 R.id.radio_2 ->
                     if (checked) {
                         Toast.makeText(this, view.text, Toast.LENGTH_SHORT).show()
-                        userAnswers[currentQuestionNumber] = "b"
+                        userAnswers[questions[currentQuestionNumber].id] = "b"
                     }
                 R.id.radio_3 ->
                     if (checked) {
                         Toast.makeText(this, view.text, Toast.LENGTH_SHORT).show()
-                        userAnswers[currentQuestionNumber] = "c"
+                        userAnswers [questions[currentQuestionNumber].id] = "c"
                     }
                 R.id.radio_4 ->
                     if (checked) {
                         Toast.makeText(this, view.text, Toast.LENGTH_SHORT).show()
-                        userAnswers[currentQuestionNumber] = "d"
+                        userAnswers [questions[currentQuestionNumber].id] = "d"
                     }
             }
         }
