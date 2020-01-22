@@ -1,14 +1,14 @@
 package com.psb.quizapp
 
+import android.app.ProgressDialog.show
 import android.content.ContentValues
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.*
 import androidx.lifecycle.ViewModelProviders
+import kotlinx.android.synthetic.main.custom_toast.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity() {
             updateQuestion()
         }
 
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -122,6 +123,25 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    private fun showAnswerToast(userAnswer:String){
+
+        
+
+        val layout = layoutInflater.inflate(R.layout.custom_toast,custom_toast_container)
+
+        val questionFeedbackTextView:TextView = layout.findViewById(R.id.question_feedback_text_view)
+
+        questionFeedbackTextView.text = "The correct answer is A"
+
+        val myToast = Toast(applicationContext)
+        myToast.duration = Toast.LENGTH_LONG
+        myToast.setGravity(Gravity.CENTER, 0,-50)
+        myToast.view = layout//setting the view of custom toast layout
+        myToast.show()
+
+    }
+
+
     fun onRadioButtonClicked(view: View) {
         if (view is RadioButton) {
             // Is the button now checked?
@@ -131,8 +151,13 @@ class MainActivity : AppCompatActivity() {
             when (view.getId()) {
                 R.id.radio_1 ->
                     if (checked) {
-                        Toast.makeText(this, view.text, Toast.LENGTH_SHORT).show()
-                        userAnswers[questions[currentQuestionNumber].id] = "a"
+//                        Toast.makeText(this, view.text, Toast.LENGTH_SHORT).show()
+                        val userAnswer = "a"
+
+                        userAnswers[questions[currentQuestionNumber].id] = userAnswer
+
+                        showAnswerToast(userAnswer)
+
                     }
                 R.id.radio_2 ->
                     if (checked) {
