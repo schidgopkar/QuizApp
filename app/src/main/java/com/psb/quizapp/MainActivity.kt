@@ -48,7 +48,6 @@ class MainActivity : AppCompatActivity() {
 
         questionTextView = findViewById(R.id.question_text_view)
 
-
         radioGroup = findViewById(R.id.radio_group)
 
         radioButton1 = findViewById(R.id.radio_1)
@@ -73,7 +72,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-
         questionListViewModel.getQuestionsData {data ->
             questions = data
             questions.forEach{ question ->
@@ -81,7 +79,6 @@ class MainActivity : AppCompatActivity() {
             }
             updateQuestion()
         }
-
 
     }
 
@@ -122,12 +119,6 @@ class MainActivity : AppCompatActivity() {
                     radioGroup.clearCheck()
                 }
             }
-
-
-
-
-
-
     }
 
 
