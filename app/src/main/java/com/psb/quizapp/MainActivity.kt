@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.lifecycle.ViewModelProviders
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.custom_toast.*
 
 class MainActivity : AppCompatActivity() {
@@ -33,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var submitButton:Button
 
     private var questionListViewModel: QuestionListViewModel = QuestionListViewModel()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,6 +101,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateQuestion(){
 
+
             var question = questions[currentQuestionNumber]
 
             questionNumber.text = "Question: ${(currentQuestionNumber + 1)}"
@@ -123,21 +126,41 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+
     private fun showAnswerToast(userAnswer:String){
 
-        
+        userAnswers[questions[currentQuestionNumber].id] = userAnswer
 
         val layout = layoutInflater.inflate(R.layout.custom_toast,custom_toast_container)
 
         val questionFeedbackTextView:TextView = layout.findViewById(R.id.question_feedback_text_view)
 
-        questionFeedbackTextView.text = "The correct answer is A"
+        val answerFeedbackImageView:ImageView = layout.findViewById(R.id.answer_feedback_image_view)
+
+        val correctAnswer = questions[currentQuestionNumber].answer
+
+        var correctAnswerCount = 0
+
+        questions.forEach { question ->
+            if (userAnswers[question.id] == question.answer) {
+                correctAnswerCount++
+            }
+        }
+
+        if(userAnswer == correctAnswer){
+            questionFeedbackTextView.text = "Great. It is the correct answer. Current score is $correctAnswerCount"
+        }else{
+            questionFeedbackTextView.text = "Wrong. The correct answer is $correctAnswer"
+            answerFeedbackImageView.setImageResource(R.drawable.wrong)
+        }
+
 
         val myToast = Toast(applicationContext)
         myToast.duration = Toast.LENGTH_LONG
         myToast.setGravity(Gravity.CENTER, 0,-50)
         myToast.view = layout//setting the view of custom toast layout
         myToast.show()
+
 
     }
 
@@ -151,28 +174,23 @@ class MainActivity : AppCompatActivity() {
             when (view.getId()) {
                 R.id.radio_1 ->
                     if (checked) {
-//                        Toast.makeText(this, view.text, Toast.LENGTH_SHORT).show()
                         val userAnswer = "a"
-
-                        userAnswers[questions[currentQuestionNumber].id] = userAnswer
-
                         showAnswerToast(userAnswer)
-
                     }
                 R.id.radio_2 ->
                     if (checked) {
-                        Toast.makeText(this, view.text, Toast.LENGTH_SHORT).show()
-                        userAnswers[questions[currentQuestionNumber].id] = "b"
+                        val userAnswer = "b"
+                        showAnswerToast(userAnswer)
                     }
                 R.id.radio_3 ->
                     if (checked) {
-                        Toast.makeText(this, view.text, Toast.LENGTH_SHORT).show()
-                        userAnswers [questions[currentQuestionNumber].id] = "c"
+                        val userAnswer = "c"
+                        showAnswerToast(userAnswer)
                     }
                 R.id.radio_4 ->
                     if (checked) {
-                        Toast.makeText(this, view.text, Toast.LENGTH_SHORT).show()
-                        userAnswers [questions[currentQuestionNumber].id] = "d"
+                        val userAnswer = "d"
+                        showAnswerToast(userAnswer)
                     }
             }
         }

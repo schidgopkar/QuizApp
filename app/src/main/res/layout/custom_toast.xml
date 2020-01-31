@@ -5,7 +5,8 @@
     android:layout_height="fill_parent"
     android:background="@drawable/custom_toast_background"
     >
-    <ImageView android:src="@drawable/correct"
+    <ImageView android:id="@+id/answer_feedback_image_view"
+        android:src="@drawable/correct"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="20dp"

@@ -7,9 +7,12 @@ import android.os.Bundle
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
 
+
+    private val db = FirebaseFirestore.getInstance()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,7 +20,14 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
 //        signOut()
-        displaySignInOptions()
+
+        if(FirebaseAuth.getInstance().currentUser != null){
+            startActivity(Intent(this, MainActivity::class.java))
+        }else{
+            displaySignInOptions()
+        }
+
+
     }
 
 
@@ -32,7 +42,11 @@ class LoginActivity : AppCompatActivity() {
                 // Successfully signed in
                 val user = FirebaseAuth.getInstance().currentUser
 
-                startActivity(Intent(this, MainActivity::class.java))
+                db.collection("users").document("${user?.uid}").set(user!!).addOnSuccessListener {
+                    startActivity(Intent(this, MainActivity::class.java))
+                }.addOnFailureListener {
+
+                }
 
                 // ...
             } else {
