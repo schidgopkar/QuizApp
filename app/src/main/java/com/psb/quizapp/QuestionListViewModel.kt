@@ -81,4 +81,10 @@ class QuestionListViewModel:ViewModel() {
 
     }
 
+    fun getPastScoresForUser(callback:(data:List<Int>) -> Unit){
+
+        
+
+    }
+
 }

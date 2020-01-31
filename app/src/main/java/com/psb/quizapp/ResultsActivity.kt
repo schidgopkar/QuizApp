@@ -15,7 +15,6 @@ private const val EXTRA_USER_ANSWERS_MAP = "com.psb.quizapp.user_answers_map"
 
 class ResultsActivity : AppCompatActivity() {
 
-//    private lateinit var resultProgressBar: ProgressBar
 
     private var userAnswers = hashMapOf<String, String>()
     private var answers = hashMapOf<Int, String>()
@@ -26,8 +25,6 @@ class ResultsActivity : AppCompatActivity() {
 
         val actionBar = supportActionBar
         actionBar!!.title = "Results"
-
-//        resultProgressBar = findViewById(R.id.result_progress_bar)
 
         userAnswers = intent.getSerializableExtra(EXTRA_USER_ANSWERS_MAP) as HashMap<String, String>
 
