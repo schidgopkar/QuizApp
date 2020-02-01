@@ -3,7 +3,13 @@ package com.psb.quizapp
 import android.content.ContentValues
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.type.Date
+import java.sql.Time
+
 
 class QuestionListViewModel:ViewModel() {
 
@@ -12,6 +18,10 @@ class QuestionListViewModel:ViewModel() {
 
     // Access a Cloud Firestore instance from your Activity
     private val db = FirebaseFirestore.getInstance()
+
+    private val currentUser = FirebaseAuth.getInstance().currentUser!!.uid
+
+    private val userReference = db.collection("users").document(currentUser)
 
 
     fun getQuestionsData(callback:(data:MutableList<Question>) -> Unit) {
@@ -81,9 +91,36 @@ class QuestionListViewModel:ViewModel() {
 
     }
 
-    fun getPastScoresForUser(callback:(data:List<Int>) -> Unit){
+    fun uploadCurrentScore(score:Int){
 
-        
+        val timestamp = java.sql.Timestamp(System.currentTimeMillis())
+
+        val scoreData = hashMapOf(
+            "timestamp" to timestamp,
+            "score" to score
+        )
+
+        userReference.collection("scores").add(scoreData)
+            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
+            .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
+    }
+
+    fun getPastScoresForUser(callback: (data: List<Map<String,Any>>) -> Unit) {
+
+        userReference.collection("scores").orderBy("timestamp", Query.Direction.DESCENDING).limit(3).get().addOnSuccessListener { documents ->
+            var scoreList = mutableListOf<Map<String,Any>>()
+            for (document in documents) {
+                Log.d(TAG, "${document.id} => ${document.data}")
+                val scoreData = document.data as Map<String,Any>
+                scoreList.add(scoreData)
+            }
+            callback(scoreList)
+        }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting documents: ", exception)
+            }
+
+
 
     }
 

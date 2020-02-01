@@ -14,12 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_result_list.*
 import android.content.Intent
+import com.google.common.base.Strings
+import com.google.firebase.Timestamp
 
-
-
-
-
-private const val TAG = "ResultListFragment"
+const val TAG = "ResultListFragment"
 
 class ResultListFragment : Fragment() {
 
@@ -28,6 +26,9 @@ class ResultListFragment : Fragment() {
     var correctAnswerCount = 0
 
     private lateinit var gradeTextView:TextView
+    private lateinit var firstScoreTextView: TextView
+    private  lateinit var secondScoreTextView: TextView
+    private lateinit var thirdScoreTextView: TextView
 
     private lateinit var resultRecyclerView: RecyclerView
     private var adapter: ResultAdapter? = null
@@ -60,7 +61,9 @@ class ResultListFragment : Fragment() {
         updateUI()
 
         gradeTextView= view.findViewById(R.id.grade_text_view)
-
+        firstScoreTextView = view.findViewById(R.id.first_score_textview)
+        secondScoreTextView = view.findViewById(R.id.second_score_textview)
+        thirdScoreTextView = view.findViewById(R.id.third_score_textview)
 
         return view
     }
@@ -73,12 +76,25 @@ class ResultListFragment : Fragment() {
                 if(userAnswers[question.id] == question.answer){
                     correctAnswerCount ++
 
+                }
             }
-                gradeTextView.text = "Grade $correctAnswerCount out of ${data.size}"
-            }
+            gradeTextView.text = "Grade $correctAnswerCount out of ${data.size}"
+            questionListViewModel.uploadCurrentScore(correctAnswerCount)
         }
 
-
+        questionListViewModel.getPastScoresForUser {scoreList ->
+            for(score in scoreList){
+                val firstTimestamp = scoreList[0]["timestamp"] as Timestamp
+                val secondTimestamp = scoreList[1]["timestamp"] as Timestamp
+                val thirdTimestamp = scoreList[2]["timestamp"] as Timestamp
+                val firstScore = scoreList[0]["score"]
+                val secondScore = scoreList[1]["score"]
+                val thirdScore = scoreList[2]["score"]
+                firstScoreTextView.text =  "${firstTimestamp.toDate()}  ->  $firstScore"
+                secondScoreTextView.text = "${secondTimestamp.toDate()}  ->  $secondScore"
+                thirdScoreTextView.text = "${thirdTimestamp.toDate()}  ->  $thirdScore"
+            }
+        }
     }
 
     private inner class ResultHolder(view: View) : RecyclerView.ViewHolder(view),

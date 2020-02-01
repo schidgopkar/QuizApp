@@ -41,6 +41,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val actionBar = supportActionBar
+
+        actionBar!!.setIcon(R.drawable.psb_logo)
+
         prevButton = findViewById(R.id.prev_button)
         nextButton = findViewById(R.id.next_button)
 
