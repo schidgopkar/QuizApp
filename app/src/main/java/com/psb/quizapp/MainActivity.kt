@@ -41,9 +41,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val actionBar = supportActionBar
+//        supportActionBar?.setHomeAsUpIndicator(R.drawable.psb_logo)// set drawable icon
+//        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        actionBar!!.setIcon(R.drawable.psb_logo)
 
         prevButton = findViewById(R.id.prev_button)
         nextButton = findViewById(R.id.next_button)
