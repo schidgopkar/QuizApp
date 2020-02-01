@@ -4,7 +4,8 @@
 
     <item
         android:id="@+id/action_retake_quiz"
-        app:showAsAction="ifRoom"
+        android:icon="@drawable/restart"
+        app:showAsAction="always|withText"
         android:title="@string/retake_quiz" />
 
 </menu>
