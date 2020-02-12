@@ -119,9 +119,6 @@ class QuestionListViewModel:ViewModel() {
             .addOnFailureListener { exception ->
                 Log.w(TAG, "Error getting documents: ", exception)
             }
-
-
-
     }
 
 }
